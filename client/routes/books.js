@@ -19,10 +19,9 @@ router.post('/new',jsonParser, (req, res) => {
     knex('book')
         .insert(req.body)
         .returning('*')
-        .then((data) => {
-        res.send(data)
-    })
+        .then((data) => res.send(data))
         .catch(error => console.log('iS there an error', error) )
 });
+
 
 module.exports = router;
