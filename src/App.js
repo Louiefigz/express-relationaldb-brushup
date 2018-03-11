@@ -77,13 +77,20 @@ class App extends Component {
             .then(response => console.log('Success:', response));
     }
 
+    handleUpdateRes(e){
+        const removeItem  = this.state.response.filter(n => n.id !== e[0].id);
+        this.setState({
+            response: removeItem.concat(e[0])
+        })
+    }
+
     componentDidUpdate(){
         console.log('the state changed to : ', this.state.response)
     }
 
   render() {
         const allBooks = this.state.response.map( book =>{
-            return <Book key={book.id} bookInfo={book} />
+            return <Book key={book.id} bookInfo={book} handleUpdateRes={this.handleUpdateRes.bind(this)} />
         })
 
 
@@ -93,11 +100,12 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-            {allBooks}
+
           <input onChange={this.handleTitle.bind(this) } placeholder='title'/>
           <input onChange={this.handleGenre.bind(this) } placeholder='genre'/>
           <input onChange={this.handleDesc.bind(this) } placeholder='desc'/>
         <button onClick={this.handleSubmit } >Submit</button>
+          {allBooks}
       </div>
     );
   }

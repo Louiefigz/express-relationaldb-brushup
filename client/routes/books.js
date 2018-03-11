@@ -23,5 +23,21 @@ router.post('/new',jsonParser, (req, res) => {
         .catch(error => console.log('iS there an error', error) )
 });
 
+/* EDIT book. */
+router.put('/edit/:id', jsonParser, (req, res) => {
+    console.log('Body', req.body)
+    console.log('Params', req.params.id)
+
+    knex('book')
+        .update(req.body)
+        .returning('*')
+        .where({
+            id: req.params.id,
+        })
+        .then((data) => {
+            res.send(data);
+        });
+});
+
 
 module.exports = router;
