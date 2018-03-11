@@ -40,4 +40,18 @@ router.put('/edit/:id', jsonParser, (req, res) => {
 });
 
 
+/* DELETE book. */
+router.delete('/delete/:id', (req, res) => {
+    knex('book')
+        .del()
+        .where({
+            id: req.params.id,
+        })
+        .then(() => {
+            res.send({code: 'successfully deleted'});
+        })
+        .catch((err)=> res.send(err))
+});
+
+
 module.exports = router;

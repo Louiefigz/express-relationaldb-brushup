@@ -15,6 +15,7 @@ export default class Book extends Component{
         this.handleGenre = this.handleInput.bind(this, 'genre');
         this.handleDesc = this.handleInput.bind(this, 'desc');
         this.handleUpdate = this.handleUpdate.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleEditButton() {
@@ -49,12 +50,29 @@ export default class Book extends Component{
         }).then(res => {
             this.setState({title: '', genre: '', desc: '', editTriggered: false})
             res.json()
-                .then(resp => this.props.handleUpdateRes(resp) )
+                .then(resp => this.props.handleUpdateRes(resp[0]) )
         })
             .catch(error => console.error('Error:', error))
             .then(response => console.log('Success:', response));
     }
 
+    handleDelete(){
+        const data = {
+            title: this.state.title ? this.state.title : this.props.title,
+            genre: this.state.genre ? this.state.genre : this.props.genre,
+            desc: this.state.desc ? this.state.desc : this.props.desc
+        }
+        fetch('/books/delete/' + this.props.bookInfo.id, {
+            method: 'DELETE', // or 'PUT'
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        }).then(res => {
+            this.props.handleUpdateDel(this.props.bookInfo)
+        })
+            .catch(error => console.error('Error:', error))
+    }
 
 
     render(){
@@ -65,7 +83,8 @@ export default class Book extends Component{
                 <div>Title: {this.props.bookInfo.title} </div>
                 <div>genre: {this.props.bookInfo.genre}</div>
                 <div>Desc: {this.props.bookInfo.desc}</div>
-                <button onClick={this.handleEditButton}> Edit </button><br/><br/>
+                <button onClick={this.handleEditButton}> Edit </button>
+                <button onClick={this.handleDelete}> Delete </button><br/><br/>
             </div>
                 :
             <div>
