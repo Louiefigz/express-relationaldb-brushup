@@ -50,7 +50,7 @@ export default class Book extends Component{
         }).then(res => {
             this.setState({title: '', genre: '', desc: '', editTriggered: false})
             res.json()
-                .then(resp => this.props.handleUpdateRes(resp[0]) )
+                .then(resp => { this.props.handleUpdateRes(resp) })
         })
             .catch(error => console.error('Error:', error))
             .then(response => console.log('Success:', response));

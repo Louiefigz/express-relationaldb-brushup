@@ -1,56 +1,79 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const Book = require('../models/book');
+
 
 const knex = require('../db/knex');
 var router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res) => {
-    knex('book').select().then((books) => {
-        res.send(books);
-    });
+    Book
+        .collection()
+        .fetch()
+        .then((posts) => {
+            res.send(posts);
+        })
+        .catch((error) => {
+            res.send({error});
+        });
 
 });
 
 /* INSERT new book. */
 router.post('/new',jsonParser, (req, res) => {
+
     console.log(req.body)
-    knex('book')
-        .insert(req.body)
-        .returning('*')
-        .then((data) => res.send(data))
-        .catch(error => console.log('iS there an error', error) )
+    Book
+        .forge(req.body)
+        .save()
+        .then((book) => {
+            res.send(book);
+        })
+        .catch((error) => {
+            res.send({error});
+        });
 });
 
 /* EDIT book. */
 router.put('/edit/:id', jsonParser, (req, res) => {
-    console.log('Body', req.body)
-    console.log('Params', req.params.id)
 
-    knex('book')
-        .update(req.body)
-        .returning('*')
-        .where({
-            id: req.params.id,
+    Book
+        .forge({id: req.params.id})
+        .fetch({require: true})
+        .then((book) => {
+            book.save(req.body)
+                .then( saved =>  res.send(saved) )
         })
-        .then((data) => {
-            res.send(data);
+        .catch((error) => {
+            res.send({error});
         });
+
 });
 
 
 /* DELETE book. */
 router.delete('/delete/:id', (req, res) => {
-    knex('book')
-        .del()
-        .where({
-            id: req.params.id,
+
+
+    Book
+        .forge({id: req.params.id})
+        .fetch({require: true})
+        .then(function (book) {
+            console.log(book)
+            book.destroy()
+                .then(function () {
+                    res.send( {message: 'User successfully deleted'});
+                })
+                .catch(function (err) {
+                    res.status(500).json({error: true, data: {message: err.message}});
+                });
         })
-        .then(() => {
-            res.send({code: 'successfully deleted'});
-        })
-        .catch((err)=> res.send(err))
+        .catch(function (err) {
+            res.status(500).json({error: true, data: {message: err.message}});
+        });
+
 });
 
 
