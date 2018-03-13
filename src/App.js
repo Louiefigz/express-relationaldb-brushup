@@ -71,7 +71,7 @@ class App extends Component {
             })
         }).then(res => {
             res.json()
-                .then(resp => this.setState({response: this.state.response.concat(resp[0])}))
+                .then(resp => this.setState({response: this.state.response.concat(resp)}))
         })
             .catch(error => console.error('Error:', error))
             .then(response => console.log('Success:', response));
