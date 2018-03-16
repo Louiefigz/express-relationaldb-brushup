@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Book from './components/book'
+import {connect} from "react-redux";
+import { createBook, getAllBooks } from "./actions/bookActions";
+import {bindActionCreators} from "redux";
+
 
 class App extends Component {
     constructor(){
         super();
 
         this.state = {
-            response: [],
             title: '',
             genre:'',
             desc: ''
@@ -17,64 +20,30 @@ class App extends Component {
     }
 
 
-
     componentDidMount() {
-        this.callApi()
-            .then(res =>{
-                this.setState({
-                    response: res
-                })
-            })
-            .catch(err => console.log(err));
+        this.props.getAllBooks();
     }
 
-    callApi = async () => {
-        const response = await fetch('/books');
-        const body = await response.json();
-        console.log(body)
-        if (response.status !== 200) throw Error(body.message);
 
-        return body;
-    };
-
-    handleTitle(e){
-        console.log(e.target.value)
+    handleInputs(key, e){
         this.setState({
-            title: e.target.value
-        })
-    }
-
-    handleGenre(e){
-        this.setState({
-            genre: e.target.value
-        })
-    }
-
-    handleDesc(e){
-        console.log('is this getting hit?')
-        this.setState({
-            desc: e.target.value
+            [key]: e.target.value
         })
     }
 
     handleSubmit(){
-        var data = {
+        const data = {
             title: this.state.title,
             genre: this.state.genre,
             desc: this.state.desc
         }
-        fetch('/books/new', {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify(data),
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        }).then(res => {
-            res.json()
-                .then(resp => this.setState({response: this.state.response.concat(resp)}))
+        this.setState({
+            title: '',
+            genre: '',
+            desc: ''
         })
-            .catch(error => console.error('Error:', error))
-            .then(response => console.log('Success:', response));
+
+        this.props.createBook(data);
     }
 
     handleUpdateRes(e){
@@ -89,15 +58,13 @@ class App extends Component {
         })
     }
 
-    componentDidUpdate(){
-        console.log('the state changed to : ', this.state.response)
-    }
+
 
   render() {
-        const allBooks = this.state.response.map( book =>{
+
+        const allBooks = this.props.getBooks.map( book =>{
             return <Book key={book.id} bookInfo={book} handleUpdateRes={this.handleUpdateRes.bind(this)}  handleUpdateDel={this.handleUpdateDel.bind(this)}/>
         })
-
 
     return (
       <div className="App">
@@ -106,9 +73,9 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
 
-          <input onChange={this.handleTitle.bind(this) } placeholder='title'/>
-          <input onChange={this.handleGenre.bind(this) } placeholder='genre'/>
-          <input onChange={this.handleDesc.bind(this) } placeholder='desc'/>
+          <input onChange={this.handleInputs.bind(this, 'title' ) } value={this.state.title} placeholder='title'/>
+          <input onChange={this.handleInputs.bind(this, 'genre' ) } value={this.state.genre} placeholder='genre'/>
+          <input onChange={this.handleInputs.bind(this, 'desc' ) } value={this.state.desc} placeholder='desc'/>
         <button onClick={this.handleSubmit } >Submit</button>
           {allBooks}
       </div>
@@ -116,4 +83,18 @@ class App extends Component {
   }
 }
 
-export default App;
+
+
+
+const mapStateToProps = (state) => {
+    return { getBooks: state.books.getBooks }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        createBook: createBook,
+        getAllBooks: getAllBooks}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+

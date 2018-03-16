@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { createBook } from '../actions/bookActions';
 
 
-export default class Book extends Component{
+
+class Book extends Component{
     constructor(){
         super();
         this.state ={
@@ -76,7 +80,6 @@ export default class Book extends Component{
 
 
     render(){
-
         return(
             !this.state.editTriggered ?
             <div>
@@ -101,3 +104,15 @@ export default class Book extends Component{
     }
 
 }
+
+
+
+const mapStateToProps = (state) => {
+    return { books: state.books }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({createBook: createBook}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Book)
