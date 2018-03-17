@@ -46,12 +46,7 @@ class App extends Component {
         this.props.createBook(data);
     }
 
-    handleUpdateRes(e){
-        const removeItem  = this.state.response.filter(n => n.id !== e.id);
-        this.setState({
-            response: removeItem.concat(e)
-        })
-    }
+
     handleUpdateDel(e){
         this.setState({
             response: this.state.response.filter(n => n.id !== e.id)
@@ -61,9 +56,10 @@ class App extends Component {
 
 
   render() {
-
         const allBooks = this.props.getBooks.map( book =>{
-            return <Book key={book.id} bookInfo={book} handleUpdateRes={this.handleUpdateRes.bind(this)}  handleUpdateDel={this.handleUpdateDel.bind(this)}/>
+
+            console.log('book', book)
+            return <Book key={book.id} bookInfo={book} handleUpdateDel={this.handleUpdateDel.bind(this)}/>
         })
 
     return (
