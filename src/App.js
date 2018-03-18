@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+// import logo from './logo.svg';
+import './components/user_account/signup.css';
 import Book from './components/book'
 import {connect} from "react-redux";
 import { createBook, getAllBooks } from "./actions/bookActions";
+import { signUp } from "./actions/userActions";
+import SignUp from "./components/user_account/signUp";
+
 import {bindActionCreators} from "redux";
+import { Route, Switch} from 'react-router-dom';
+
 
 
 class App extends Component {
@@ -14,7 +19,10 @@ class App extends Component {
         this.state = {
             title: '',
             genre:'',
-            desc: ''
+            desc: '',
+            name: '',
+            username: '',
+            email: ''
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -47,27 +55,39 @@ class App extends Component {
     }
 
 
-    handleUpdateDel(e){
-        this.setState({
-            response: this.state.response.filter(n => n.id !== e.id)
-        })
+    handleUserSubmit(){
+        const data = {
+            name: this.state.name,
+            username: this.state.username,
+            email: this.state.email
+        }
+        this.props.signUp(data);
     }
 
 
 
   render() {
         const allBooks = this.props.getBooks.map( book =>{
-
-            console.log('book', book)
-            return <Book key={book.id} bookInfo={book} handleUpdateDel={this.handleUpdateDel.bind(this)}/>
+            return <Book key={book.id} bookInfo={book} />
         })
+      const allUsers = this.props.getUsers.map( user =>{
+          return <Book key={user.id} bookInfo={user} />
+      })
 
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
+
+
+          <Switch>
+              <Route exact path="/signup" name="Signup Page" component={SignUp}/>
+          </Switch>
+          <input onChange={this.handleInputs.bind(this, 'name' ) } value={this.state.name} placeholder='name'/>
+          <input onChange={this.handleInputs.bind(this, 'username' ) } value={this.state.username} placeholder='username'/>
+          <input onChange={this.handleInputs.bind(this, 'email' ) } value={this.state.email} placeholder='email'/>
+          <button onClick={this.handleUserSubmit.bind(this) } >Submit</button>
+          {allUsers}
+
+          <br/><br/>
 
           <input onChange={this.handleInputs.bind(this, 'title' ) } value={this.state.title} placeholder='title'/>
           <input onChange={this.handleInputs.bind(this, 'genre' ) } value={this.state.genre} placeholder='genre'/>
@@ -83,13 +103,18 @@ class App extends Component {
 
 
 const mapStateToProps = (state) => {
-    return { getBooks: state.books.getBooks }
+    return {
+        getBooks: state.books.getBooks,
+        getUsers: state.users.getUsers,
+        error: state.users.APIErrorMessage
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         createBook: createBook,
-        getAllBooks: getAllBooks}, dispatch)
+        getAllBooks: getAllBooks,
+        signUp: signUp }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

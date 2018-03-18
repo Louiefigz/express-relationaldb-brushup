@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { createBook, updateBook, deleteBook } from '../actions/bookActions';
+import { updateBook, deleteBook } from '../actions/bookActions';
 
 
 
@@ -14,10 +14,7 @@ class Book extends Component{
             genre: '',
             desc: ''
         }
-        this.handleEditButton = this.handleEditButton.bind(this);
 
-        this.handleUpdate = this.handleUpdate.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleEditButton() {
@@ -70,8 +67,8 @@ class Book extends Component{
                 <div>Title: {this.props.bookInfo.title} </div>
                 <div>genre: {this.props.bookInfo.genre}</div>
                 <div>Desc: {this.props.bookInfo.desc}</div>
-                <button onClick={this.handleEditButton}> Edit </button>
-                <button onClick={this.handleDelete}> Delete </button><br/><br/>
+                <button onClick={this.handleEditButton.bind(this)}> Edit </button>
+                <button onClick={this.handleDelete.bind(this)}> Delete </button><br/><br/>
             </div>
                 :
             <div>
@@ -79,8 +76,8 @@ class Book extends Component{
                 genre: <input placeholder={this.props.bookInfo.genre} onChange={this.handleInput.bind(this, 'genre')} value={this.state.genre}/>
                 Desc: <input placeholder={this.props.bookInfo.desc} onChange={this.handleInput.bind(this, 'desc')} value={this.state.desc}/>
 
-                <button onClick={this.handleUpdate}> Update </button>
-                <button onClick={this.handleEditButton}> Done</button>
+                <button onClick={this.handleUpdate.bind(this)}> Update </button>
+                <button onClick={this.handleEditButton.bind(this)}> Done</button>
                 <br/><br/>
             </div>
         )
@@ -91,15 +88,10 @@ class Book extends Component{
 
 
 
-const mapStateToProps = (state) => {
-    return { books: state.books }
-}
-
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        createBook: createBook,
         updateBook: updateBook,
         deleteBook: deleteBook}, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Book)
+export default connect(null, mapDispatchToProps)(Book)

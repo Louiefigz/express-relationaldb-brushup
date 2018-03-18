@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+// import './index.css';
 import App from './App';
+import './components/user_account/signup.css';
 import { createStore, applyMiddleware } from 'redux';
 
 import { BrowserRouter } from 'react-router-dom';

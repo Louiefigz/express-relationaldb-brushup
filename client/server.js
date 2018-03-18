@@ -6,16 +6,12 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 //const User = require('./models/user');
 const book = require('./routes/books');
+const users = require('./routes/users');
 
-
-
-
-app.get('/api/hello', (req, res) => {
-    res.send({ express: 'Hello From Express' });
-});
 
 
 app.use('/books', book);
+app.use('/users', users)
 
 // app.get('/books',  (req, res) => {
 //
